@@ -8,14 +8,11 @@ const Register = ({ navigation }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-
-
-
     const handleRegister = async(e)=>{
-       
+
         e.preventDefault()
         try {
-            const res = await fetch(`${URL}/register`, {
+            const res = await fetch(`${URL}/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -43,11 +40,11 @@ const Register = ({ navigation }) => {
             <View style={styles.register}>
                 <Text style={styles.registerHeader}>Register</Text>
                 <Text style={styles.label}>Name</Text>
-                <TextInput onChange={(e)=>setName(e.target.value)} style={styles.input} placeholder='Type your Name' />
+                <TextInput onChangeText={(e)=>setName(e)} style={styles.input} placeholder='Type your Name' />
                 <Text style={styles.label}>Email</Text>
-                <TextInput onChange={(e)=>setEmail(e.target.value)} style={styles.input} placeholder='Type your Email' />
+                <TextInput onChangeText={(e)=>setEmail(e)} style={styles.input} placeholder='Type your Email' />
                 <Text style={styles.label}>Password</Text>
-                <TextInput onChange={(e)=>setPassword(e.target.value)} style={styles.input} secureTextEntry placeholder='Type your Password' />
+                <TextInput onChangeText={(e)=>setPassword(e)} style={styles.input} secureTextEntry placeholder='Type your Password' />
                 <TouchableOpacity>
                 <Text onPress={handleRegister} style={styles.registerBtn} >
                     Register
@@ -123,7 +120,7 @@ const styles = StyleSheet.create({
 
     },
     a:{
-        color:"crimson"
+        color:"blue"
 
     }
 

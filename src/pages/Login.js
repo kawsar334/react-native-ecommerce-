@@ -1,136 +1,116 @@
-import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+import React, { useState } from 'react';
+import { StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { URL } from '../url';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-const login = ({ navigation }) => {
+const Login = ({ navigation }) => {
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("")
+    const [password, setPassword] = useState("");
 
+    const handleLogin = async () => {
+        try {
+            const res = await fetch(`${URL}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
-    const handleLogin= async(e)=>{
-        e.preventDefault()
-       try{
-           const res = await fetch(`${URL}/auth/login`, {
-               method: "POST", 
-               headers: {
-                   "Content-Type": "application/json",
-               },
-               body: JSON.stringify({ email, password }),
-           }
-           );
-
-           const data = await res.json();
-           if(data?.success){
-           console.log("sucess")
-               navigation.navigate("/home")
-               
-           }else{
-               navigation.navigate("/login")
-           }
-
-       }catch(err){
-        console.log(err);
-       }
-
-    }
-
-    
-
+            const data = await res.json();
+            if (data?.success) {
+                console.log("Success");
+                navigation.navigate("/home");
+             
+                await AsyncStorage.setItem('user', JSON.stringify(data.others._id));
+            
+            } else {
+                navigation.navigate("/login");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     return (
         <View style={styles.logincontainer}>
             <View style={styles.login}>
                 <StatusBar style="auto" />
-                <Text style={styles.header}>login</Text>
+                <Text style={styles.header}>Login</Text>
                 <Text style={styles.label}>Email</Text>
-                <TextInput style={styles.input} 
-                    onChange={(e) => setEmail(e.target.value)}
-                placeholder='Enter your Email' />
+                <TextInput
+                    style={styles.input}
+                    value={email}
+                    onChangeText={(text) => setEmail(text)}
+                    placeholder='Enter your Email'
+                />
                 <Text style={styles.label}>Password</Text>
-                <TextInput style={styles.input} onChange={(e) =>setPassword(e.target.value)} secureTextEntry placeholder='Enter your Password' />
-                <TouchableOpacity>
-                    <Text style={styles.button} onPress={handleLogin} >
-                        Login
-                    </Text>
+                <TextInput
+                    style={styles.input}
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
+                    secureTextEntry
+                    placeholder='Enter your Password'
+                />
+                <TouchableOpacity onPress={handleLogin}>
+                    <Text style={styles.button}>Login</Text>
                 </TouchableOpacity>
-                <Text style={styles.link} onPress={() => navigation.navigate("/register")}>
-                    Don't have any account?
-                    <a style={styles.a}>Register </a>
-                </Text>
+                <TouchableOpacity onPress={() => navigation.navigate("/register")}>
+                    <Text style={styles.link}>Don't have an account? Register</Text>
+                </TouchableOpacity>
             </View>
-
-
-
         </View>
-    )
-}
-
-
+    );
+};
 
 const styles = StyleSheet.create({
-
     logincontainer: {
-        width: "100%",
         flex: 1,
-        display: "flex",
+        justifyContent: "center",
         alignItems: "center",
-        backgroundColor:"white",
-
+        backgroundColor: "white",
     },
     login: {
         width: "80%",
         backgroundColor: "white",
-        marginTop: "50px",
-        gap: "10px",
-        padding: "20px",
-
+        marginTop: 50,
+        padding: 20,
     },
     header: {
-        fontSize: "25px",
+        fontSize: 25,
         textAlign: "center",
-        textTransform: "capitalize",
-        fontWeight: "600",
         fontWeight: "700",
-
-
     },
     label: {
         color: "gray",
         fontWeight: "700",
-
     },
     input: {
-        border: "none",
-        width: "100%",
-        padding: "10px",
-        border: "2px solid lightgray",
-        borderRadius: "20px",
-        fontWeight: "700",
-
-    },
-    link: {
-        fontSize: "18px",
-        fontWeight:"700"
-
-
-    },
-    a:{
-        color:"blue"
+        borderWidth: 2,
+        borderColor: "lightgray",
+        borderRadius: 20,
+        padding: 10,
+        marginBottom: 10,
     },
     button: {
-       
-        width: "100%",
-        padding: "10px",
-        border: "1px solid rebeccapurple",
-        borderRadius: "20px",
-        backgroundColor:"rebeccapurple",
-        color:"white",
-        textAlign:"center",
-        fontWeight:"700",
-    }
+        backgroundColor: "rebeccapurple",
+        color: "white",
+        textAlign: "center",
+        padding: 10,
+        borderRadius: 20,
+        fontWeight: "700",
+    },
+    link: {
+        fontSize: 18,
+        fontWeight: "700",
+        color: "blue",
+        textAlign: "center",
+        marginTop: 10,
+    },
+});
 
-})
+export default Login;
 
-export default login
+
+
